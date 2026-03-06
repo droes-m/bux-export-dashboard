@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Editor and local machine files
+.vscode/
+.python-version
+
+# Local portfolio exports and generated mappings
+*.csv
+!data/.gitkeep
