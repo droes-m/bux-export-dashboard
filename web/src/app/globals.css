@@ -43,6 +43,21 @@ input {
   font: inherit;
 }
 
+button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #c4b5fd);
+  color: #06111e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -238,21 +253,39 @@ input {
 
 .upload-form button {
   justify-self: start;
-  padding: 12px 18px;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--accent), #c4b5fd);
-  color: #06111e;
-  font-weight: 700;
 }
 
 .upload-form button:disabled {
   opacity: 0.6;
 }
 
+.secondary-button {
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-weight: 600;
+}
+
 .form-error {
   margin: 0;
   color: var(--danger);
+}
+
+.text-input,
+.text-area {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(8, 13, 22, 0.84);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
+.text-area {
+  resize: vertical;
+  min-height: 68px;
 }
 
 .monthly-chart {

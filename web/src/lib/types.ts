@@ -111,8 +111,43 @@ export type PortfolioBundle = {
   transactions: TransactionRow[];
   securityMaster: SecurityMasterRow[];
   securityMap: SecurityMapRow[];
+  effectiveMapping: SecurityMapRow[];
   portfolioRows: PortfolioRow[];
   monthlyPerformanceRows: MonthlyCategoryRow[];
   allocationRows: AllocationRow[];
   metrics: DashboardMetrics;
+  prices: PriceRow[];
+  eurusd: PriceRow[];
+};
+
+export type AssetDrilldownPoint = {
+  date: string;
+  quantity: number;
+  marketValueEur: number;
+  unitPriceEur: number | null;
+};
+
+export type AssetDrilldownSummary = {
+  assetId: string;
+  assetName: string;
+  ticker: string;
+  assetCurrency: string;
+  priceScale: number;
+  currentQuantity: number;
+  currentValueEur: number;
+  currentWeightPct: number;
+  realizedPnlEur: number;
+  unrealizedPnlEur: number;
+  openQuantity: number;
+  openAverageCostOriginal: number | null;
+  openAverageCostEur: number | null;
+  averageBuyPriceOriginal: number | null;
+  latestUnitPriceOriginal: number | null;
+  latestUnitPriceEur: number | null;
+};
+
+export type AssetDrilldownData = {
+  summary: AssetDrilldownSummary;
+  points: AssetDrilldownPoint[];
+  transactions: TransactionRow[];
 };

@@ -282,9 +282,12 @@ export async function buildPortfolioBundleFromWorkspace(): Promise<PortfolioBund
     transactions,
     securityMaster,
     securityMap,
+    effectiveMapping: securityMap,
     portfolioRows,
     monthlyPerformanceRows,
     allocationRows,
-    metrics
+    metrics,
+    prices,
+    eurusd
   };
 }

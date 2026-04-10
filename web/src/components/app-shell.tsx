@@ -2,7 +2,15 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 type NavItem = {
-  href: "/" | "/import" | "/cashflows" | "/transactions" | "/mapping" | "/forecast" | "/reconciliation";
+  href:
+    | "/"
+    | "/import"
+    | "/cashflows"
+    | "/transactions"
+    | "/mapping"
+    | "/asset-drilldown"
+    | "/forecast"
+    | "/reconciliation";
   label: string;
   description: string;
 };
@@ -11,6 +19,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Overview", description: "Portfolio summary and quick health check" },
   { href: "/import", label: "Import", description: "Upload or replace a local BUX export" },
   { href: "/cashflows", label: "Cashflows", description: "Monthly deposits, fees, dividends, and tax" },
+  { href: "/asset-drilldown", label: "Asset Drilldown", description: "Per-asset value, P/L, and trade replay" },
   { href: "/transactions", label: "Transactions", description: "Browse the raw ledger" },
   { href: "/mapping", label: "Mapping", description: "Inspect the security master and mappings" },
   { href: "/forecast", label: "Forecast", description: "Later: trend and projection layer" },
