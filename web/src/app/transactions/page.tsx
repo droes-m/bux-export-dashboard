@@ -1,10 +1,9 @@
 import { AppShell } from "@/components/app-shell";
-import { readImportedTransactionsCsv } from "@/lib/storage";
-import { parseTransactionsCsv } from "@/lib/portfolio";
+import { buildPortfolioBundleFromWorkspace } from "@/lib/dashboard";
 
 export default async function TransactionsPage() {
-  const csvText = await readImportedTransactionsCsv();
-  const transactions = csvText ? parseTransactionsCsv(csvText) : [];
+  const bundle = await buildPortfolioBundleFromWorkspace();
+  const transactions = bundle?.transactions ?? [];
 
   return (
     <AppShell

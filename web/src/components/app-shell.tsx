@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 type NavItem = {
-  href: string;
+  href: "/" | "/import" | "/cashflows" | "/transactions" | "/mapping" | "/forecast" | "/reconciliation";
   label: string;
   description: string;
 };

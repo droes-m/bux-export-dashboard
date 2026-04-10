@@ -1,42 +1,99 @@
 import { AppShell } from "@/components/app-shell";
 import { MetricCard } from "@/components/metric-card";
-import { MonthlyBars } from "@/components/monthly-bars";
 import { SectionCard } from "@/components/section-card";
-import { readWorkspaceState } from "@/lib/storage";
 import { formatEuro } from "@/lib/portfolio";
+import { buildPortfolioBundleFromWorkspace } from "@/lib/dashboard";
+import { readWorkspaceState } from "@/lib/storage";
 
 export default async function HomePage() {
-  const state = await readWorkspaceState();
+  const [state, bundle] = await Promise.all([readWorkspaceState(), buildPortfolioBundleFromWorkspace()]);
 
   return (
     <AppShell
       eyebrow="Overview"
       title="Portfolio dashboard, rebuilt for the browser"
-      summary="This first React pass focuses on the modern shell, local file persistence, and transaction-driven summaries. The valuation and market-data layer will be ported next so the new app matches the Python dashboard."
+      summary="The web version now reads the local CSV, loads the mapped securities, fetches market prices, and turns that into portfolio value, gain, and allocation."
     >
-      {state ? (
+      {bundle ? (
         <div className="stack">
           <div className="grid-4">
-            <MetricCard label="Transactions" value={state.transactionCount.toLocaleString("nl-BE")} detail={`Imported from ${state.sourceFileName}`} />
-            <MetricCard label="Net deposits" value={formatEuro(state.metrics.netExternalFlowsEur)} detail="Cumulative external cash in" />
-            <MetricCard label="Realized P/L" value={formatEuro(state.metrics.realizedPnlEur)} detail="Sell-trade P/L from the export" />
-            <MetricCard label="Cash balance" value={formatEuro(state.metrics.latestCashBalanceEur)} detail="Latest reported cash balance" />
+            <MetricCard label="Portfolio" value={formatEuro(bundle.metrics.portfolioValueEur)} detail="Cash plus market value" />
+            <MetricCard label="Gain" value={formatEuro(bundle.metrics.gainAfterAllCashflowsEur)} detail={`Net external flows: ${formatEuro(bundle.metrics.netExternalFlowsEur)}`} />
+            <MetricCard label="Market value" value={formatEuro(bundle.metrics.marketValueEur)} detail="Marked-to-market holdings value" />
+            <MetricCard label="Cash balance" value={formatEuro(bundle.metrics.cashBalanceEur)} detail="Latest reported cash balance" />
           </div>
 
           <div className="two-col">
-            <SectionCard title="Monthly cashflow mix">
-              <MonthlyBars rows={state.monthlyCategoryRows} />
+            <SectionCard title="Monthly portfolio movement">
+              <div style={{ overflowX: "auto" }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Portfolio change</th>
+                      <th>Net deposits</th>
+                      <th>Market result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bundle.monthlyPerformanceRows.map((row) => (
+                      <tr key={row.month}>
+                        <td>{row.monthLabel}</td>
+                        <td>{formatEuro(row.totals.portfolio_change_eur)}</td>
+                        <td>{formatEuro(row.totals.external_flow_eur)}</td>
+                        <td>{formatEuro(row.totals.market_result_eur)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </SectionCard>
 
+            <SectionCard title="Current allocation">
+              <div style={{ overflowX: "auto" }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Asset</th>
+                      <th>Ticker</th>
+                      <th>Value</th>
+                      <th>Weight</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bundle.allocationRows.map((row) => (
+                      <tr key={row.assetId}>
+                        <td>{row.assetName}</td>
+                        <td>{row.ticker}</td>
+                        <td>{formatEuro(row.valueEur)}</td>
+                        <td>{(row.weight * 100).toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </SectionCard>
+          </div>
+
+          <div className="two-col">
             <SectionCard title="Workspace status">
               <p className="panel-copy">
-                Imported at <strong>{new Date(state.importedAt).toLocaleString("nl-BE")}</strong>.
+                Imported at <strong>{state ? new Date(state.importedAt).toLocaleString("nl-BE") : "unknown"}</strong>.
                 <br />
-                The raw CSV and derived state are now on disk under <code>web/data/</code>.
+                The raw CSV, security map, and workspace state are on disk under <code>web/data/</code>.
               </p>
               <div className="empty-state">
-                Next migration step: market pricing, portfolio valuation, and the Overview/Drilldown pages from the Streamlit app.
+                Next migration step: drilldown, reconciliation, and editable mapping parity.
               </div>
+            </SectionCard>
+            <SectionCard title="Coverage">
+              <p className="panel-copy">
+                Transactions: <strong>{bundle.transactions.length.toLocaleString("nl-BE")}</strong>
+                <br />
+                Securities in master: <strong>{bundle.securityMaster.length.toLocaleString("nl-BE")}</strong>
+                <br />
+                Mapped entries: <strong>{bundle.securityMap.filter((row) => row.ticker).length.toLocaleString("nl-BE")}</strong>
+              </p>
             </SectionCard>
           </div>
         </div>

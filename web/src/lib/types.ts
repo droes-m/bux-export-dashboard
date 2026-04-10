@@ -20,6 +20,12 @@ export type TransactionRow = {
   signedQuantity: number;
 };
 
+export type PriceRow = {
+  date: string;
+  ticker: string;
+  close: number;
+};
+
 export type SecurityMasterRow = {
   assetId: string;
   assetName: string;
@@ -44,6 +50,42 @@ export type MonthlyCategoryRow = {
   totals: Record<string, number>;
 };
 
+export type PortfolioRow = {
+  date: string;
+  cashBalanceEur: number;
+  netExternalFlowsEur: number;
+  marketValueEur: number;
+  portfolioValueEur: number;
+  gainEur: number;
+  gainPct: number | null;
+};
+
+export type AllocationRow = {
+  assetId: string;
+  assetName: string;
+  ticker: string;
+  quantity: number;
+  valueEur: number;
+  weight: number;
+};
+
+export type DashboardMetrics = {
+  portfolioValueEur: number;
+  netDepositsEur: number;
+  netExternalFlowsEur: number;
+  gainEur: number;
+  gainAfterAllCashflowsEur: number;
+  gainExFeesTaxesEur: number;
+  gainPct: number;
+  cashBalanceEur: number;
+  marketValueEur: number;
+  realizedPnlEur: number;
+  feesEur: number;
+  taxesEur: number;
+  dividendsNetEur: number;
+  interestEur: number;
+};
+
 export type BasicMetrics = {
   transactionCount: number;
   depositTotalEur: number;
@@ -62,4 +104,15 @@ export type WorkspaceState = {
   transactionCount: number;
   metrics: BasicMetrics;
   monthlyCategoryRows: MonthlyCategoryRow[];
+};
+
+export type PortfolioBundle = {
+  sourceFileName: string;
+  transactions: TransactionRow[];
+  securityMaster: SecurityMasterRow[];
+  securityMap: SecurityMapRow[];
+  portfolioRows: PortfolioRow[];
+  monthlyPerformanceRows: MonthlyCategoryRow[];
+  allocationRows: AllocationRow[];
+  metrics: DashboardMetrics;
 };

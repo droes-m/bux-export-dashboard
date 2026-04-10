@@ -1,6 +1,13 @@
 import Papa from "papaparse";
 
-import type { BasicMetrics, MonthlyCategoryRow, SecurityMasterRow, TransactionRow } from "@/lib/types";
+import type {
+  BasicMetrics,
+  DashboardMetrics,
+  MonthlyCategoryRow,
+  PortfolioRow,
+  SecurityMasterRow,
+  TransactionRow
+} from "@/lib/types";
 
 const REQUIRED_COLUMNS = ["Transaction Time (CET)", "Asset Id", "Asset Name"] as const;
 
@@ -115,6 +122,45 @@ export function computeBasicMetrics(transactions: TransactionRow[]): BasicMetric
     feesEur,
     taxesEur,
     latestCashBalanceEur
+  };
+}
+
+export function computeMetrics(transactions: TransactionRow[], portfolioRows: PortfolioRow[]): DashboardMetrics {
+  const latest = portfolioRows[portfolioRows.length - 1] ?? {
+    portfolioValueEur: 0,
+    netExternalFlowsEur: 0,
+    gainEur: 0,
+    gainPct: null,
+    cashBalanceEur: 0,
+    marketValueEur: 0
+  };
+
+  const realizedPnlEur = transactions
+    .filter((row) => row.transactionType === "Sell Trade")
+    .reduce((total, row) => total + (row.profitAndLossAmount ?? 0), 0);
+  const feesEur = transactions.filter((row) => row.transactionCategory === "fees").reduce((total, row) => total + (row.transactionAmount ?? 0), 0);
+  const taxesEur = transactions.filter((row) => row.transactionCategory === "tax").reduce((total, row) => total + (row.transactionAmount ?? 0), 0);
+  const dividendsNetEur = transactions.reduce((total, row) => total + (row.dividendNetAmount ?? 0), 0);
+  const interestEur = transactions.filter((row) => row.transactionCategory === "interest").reduce((total, row) => total + (row.transactionAmount ?? 0), 0);
+  const netExternalFlowsEur = latest.netExternalFlowsEur;
+  const gainAfterAllCashflowsEur = latest.portfolioValueEur - netExternalFlowsEur;
+  const gainExFeesTaxesEur = gainAfterAllCashflowsEur - feesEur - taxesEur;
+
+  return {
+    portfolioValueEur: latest.portfolioValueEur,
+    netDepositsEur: netExternalFlowsEur,
+    netExternalFlowsEur,
+    gainEur: gainAfterAllCashflowsEur,
+    gainAfterAllCashflowsEur,
+    gainExFeesTaxesEur,
+    gainPct: latest.gainPct ?? 0,
+    cashBalanceEur: latest.cashBalanceEur,
+    marketValueEur: latest.marketValueEur,
+    realizedPnlEur,
+    feesEur,
+    taxesEur,
+    dividendsNetEur,
+    interestEur
   };
 }
 

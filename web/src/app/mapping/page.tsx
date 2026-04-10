@@ -1,9 +1,10 @@
 import { AppShell } from "@/components/app-shell";
-import { readSecurityMaster } from "@/lib/storage";
-import type { SecurityMasterRow } from "@/lib/types";
+import { buildPortfolioBundleFromWorkspace } from "@/lib/dashboard";
 
 export default async function MappingPage() {
-  const securityMaster = ((await readSecurityMaster()) as SecurityMasterRow[] | null) ?? [];
+  const bundle = await buildPortfolioBundleFromWorkspace();
+  const securityMaster = bundle?.securityMaster ?? [];
+  const securityMap = bundle?.securityMap ?? [];
 
   return (
     <AppShell
@@ -33,6 +34,39 @@ export default async function MappingPage() {
                     <td>{row.assetId}</td>
                     <td>{row.assetName}</td>
                     <td>{row.assetCurrency || "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+      <section className="panel" style={{ marginTop: 16 }}>
+        <div className="panel-head">
+          <h3>Effective mapping</h3>
+        </div>
+        {securityMap.length === 0 ? (
+          <div className="empty-state">No security map available yet.</div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Ticker</th>
+                  <th>Currency</th>
+                  <th>Source</th>
+                  <th>Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {securityMap.map((row) => (
+                  <tr key={row.assetId}>
+                    <td>{row.assetName}</td>
+                    <td>{row.ticker || "-"}</td>
+                    <td>{row.assetCurrency || "-"}</td>
+                    <td>{row.source}</td>
+                    <td>{row.confidence}</td>
                   </tr>
                 ))}
               </tbody>
