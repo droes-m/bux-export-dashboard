@@ -16,3 +16,11 @@ wheels/
 # Local portfolio exports and generated mappings
 *.csv
 !data/.gitkeep
+
+# Web app artifacts
+web/.next/
+web/node_modules/
+web/dist/
+web/data/*.json
+web/data/*.csv
+web/.env*

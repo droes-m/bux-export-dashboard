@@ -1,0 +1,65 @@
+export type TransactionRow = {
+  transactionTime: string;
+  transactionCategory: string;
+  transactionType: string;
+  transferType: string;
+  transactionAmount: number | null;
+  transactionCurrency: string;
+  cashBalanceAmount: number | null;
+  assetId: string;
+  assetName: string;
+  assetQuantity: number | null;
+  assetPrice: number | null;
+  assetCurrency: string;
+  exchangeRate: number | null;
+  profitAndLossAmount: number | null;
+  dividendNetAmount: number | null;
+  dividendTaxAmount: number | null;
+  date: string;
+  month: string;
+  signedQuantity: number;
+};
+
+export type SecurityMasterRow = {
+  assetId: string;
+  assetName: string;
+  assetCurrency: string;
+};
+
+export type SecurityMapRow = {
+  assetId: string;
+  assetName: string;
+  assetCurrency: string;
+  ticker: string;
+  priceScale: number;
+  exchange: string;
+  source: string;
+  confidence: string;
+  notes: string;
+};
+
+export type MonthlyCategoryRow = {
+  month: string;
+  monthLabel: string;
+  totals: Record<string, number>;
+};
+
+export type BasicMetrics = {
+  transactionCount: number;
+  depositTotalEur: number;
+  netExternalFlowsEur: number;
+  realizedPnlEur: number;
+  dividendsNetEur: number;
+  interestEur: number;
+  feesEur: number;
+  taxesEur: number;
+  latestCashBalanceEur: number;
+};
+
+export type WorkspaceState = {
+  sourceFileName: string;
+  importedAt: string;
+  transactionCount: number;
+  metrics: BasicMetrics;
+  monthlyCategoryRows: MonthlyCategoryRow[];
+};
